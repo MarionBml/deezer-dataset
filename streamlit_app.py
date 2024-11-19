@@ -26,7 +26,7 @@ df = load_data()
 fav = st.multiselect(
     "Preferred artists",
     df.Artist.unique(),
-    ["Alma","Anne-Marie","Ava Max","Camila Cabello", "Chilla","Dua Lipa","Ed Sheeran","Greyson Chance", "Hatik", "Justin Bieber", "Rihanna",
+    ["Alma","Anne-Marie","Ava Max", "Chilla","Dua Lipa","Ed Sheeran","Greyson Chance", "Hatik", "Justin Bieber", "Rihanna",
      "Lomepal","Robin Schulz", "Therapie TAXI", "Tove Lo" ],
 )
 
