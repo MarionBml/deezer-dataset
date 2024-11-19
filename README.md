@@ -1,8 +1,7 @@
-# 🎬 Movies dataset template
+# 🎶 My Deezer data info
 
-A simple Streamlit app showing movie data from [The Movie Database (TMDB)](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata). 
+A simple Streamlit app showing music data from Marion's listening history from 2019 to 2024 on Deezer.
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://movies-dataset-template.streamlit.app/)
 
 ### How to run it on your own machine
 
