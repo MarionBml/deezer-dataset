@@ -16,3 +16,7 @@ A simple Streamlit app showing music data from Marion's listening history from 2
    ```
    $ streamlit run streamlit_app.py
    ```
+
+## How to access it online
+
+You can access directly the Streamlit Dashboard via this link : https://marion-deezer.streamlit.app/
