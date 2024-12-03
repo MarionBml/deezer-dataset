@@ -16,11 +16,21 @@ st.write(
 # Load the data from a CSV. We're caching this so it doesn't reload every time the app
 # reruns (e.g. if the user interacts with the widgets).
 @st.cache_data
-def load_data():
-    df = pd.read_excel('data/deezer-data_2175171744.xlsx', sheet_name='10_listeningHistory', )
-    return df
+def load_data_deezer():
+    dee = pd.read_excel('data/deezer-data_2175171744.xlsx', sheet_name='10_listeningHistory', )
+    return dee
 
-df = load_data()
+@st.cache_data
+def load_data_spotify():
+    spot = pd.read_json('data/spotify_data_251124.json')
+    return spot
+
+dee = load_data_deezer()
+spot = load_data_spotify()
+
+
+
+
 
 #Show a multiselect widget with the favorite artists using `st.multiselect`.
 fav = st.multiselect(
