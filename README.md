@@ -1,6 +1,6 @@
 # 🎶 My Deezer data info
 
-A simple Streamlit app showing music data from Marion's listening history from 2019 to 2024 on Deezer.
+A simple Streamlit app showing music data from Marion's listening history from 2019 to 2024 on Deezer & Spotify.
 
 
 ### How to run it on your own machine
