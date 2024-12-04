@@ -1,6 +1,7 @@
 import altair as alt
 import pandas as pd
 import streamlit as st
+from modules.datasets import load_data_deezer, load_data_spotify, load_data
 
 # Show the page title and description.
 st.set_page_config(page_title="Deezer & Spotify data", page_icon="🎶")
@@ -12,43 +13,6 @@ st.write(
     Just click on the widgets below to explore!
     """
 )
-
-# We're caching this so it doesn't reload every time the app
-# reruns (e.g. if the user interacts with the widgets).
-@st.cache_data
-def load_data_deezer(deezer):
-    dee = pd.read_excel(deezer, sheet_name='10_listeningHistory')
-    dee = dee.drop(columns=['Platform Name', 'Platform Model'])
-    dee.Date = pd.to_datetime(dee.Date,format='%Y-%m-%d %H:%M:%S')
-    dee = dee.rename(columns={"Listening Time" : "Listening Time (s)"})
-    dee['conn_country']=dee['ISRC'].apply(lambda x: x[0:2])
-    return dee
-
-@st.cache_data
-def load_data_spotify(spotify):
-    spot = pd.read_json(spotify)
-    spot = spot.iloc[:,0:9]
-    spot['Listening Time (s)']=round(spot['ms_played']/1000,0)
-    spot = spot.drop(columns=['platform', 'ms_played'])
-    spot = spot.rename(columns={'ts': 'Date', 
-                     'ip_addr':"IP Address",
-                      'master_metadata_track_name': 'Song Title',
-                      'master_metadata_album_artist_name' : 'Artist', # This is an approximation since Spotify doesn't take the song artist but the album artist
-                      'master_metadata_album_album_name' : 'Album Title'})
-
-    spot.Date = pd.to_datetime(spot.Date, format ="%Y-%m-%dT%H:%M:%SZ" )
-    return spot
-
-@st.cache_data
-def load_data(dee,spot):
-    data = pd.concat([dee,spot])
-    data = data[data['Song Title'].isna()== False]
-    data['Year'] = data['Date'].dt.year
-    data['Month'] = data['Date'].dt.month
-    data = data[data.Year > 2018]
-    data['spotify_track_uri'] = data['spotify_track_uri'].astype(str) 
-    data['Platform']=data['spotify_track_uri'].apply(lambda x: "Deezer" if x == 'nan' else "Spotify")
-    return data
 
 #Load the datasets
 DEEZER_PATH = 'data/deezer-data_2175171744.xlsx'
@@ -169,27 +133,29 @@ with col2:
     st.altair_chart(chart, use_container_width=True)
 
 #Show a multiselect widget with the favorite artists using `st.multiselect`.
-artists = data['Artist'].str.split(',').explode().str.strip().unique()
+artists = data_artists['Artist'].(',').explode().str.strip().unique()
 
 fav = st.multiselect(
     "Preferred artists",
     sorted(artists),
-    ["Alma","Anne-Marie","Ava Max", "Chilla","Dua Lipa","Ed Sheeran","Greyson Chance", "Hatik", "Justin Bieber", "Rihanna",
-     "Lomepal","Robin Schulz", "Therapie TAXI", "Tove Lo" ],
+    ["Alma","Ava Max", "Chilla","Dua Lipa","Ed Sheeran","Greyson Chance", "Hatik",  "Rihanna",
+     "Lomepal", "Therapie TAXI", "Tove Lo" ],
 )
 
 # Filter the dataframe based on the widget input and reshape it.
-#data_filtered = data[(data["Artist"].isin(fav)) & (data["Year"].between(years[0], years[1]))]
+data_filtered = data_artists[data_artists["Artist"].isin(fav)]
+#En utilisant data_artists, on fait quelques approximations : si on prenait le temps total de tous les artistes, on aurait un total bien supérieur à la réalité puisqu'une chanson
+#avec plusieurs artistes est comptée autant de fois qu'il y'a d'artistes 
 
-data_final=pd.DataFrame(columns = data.columns) # On construit un DataFrame dans lequel ne sont conservés que les noms d'artistes contenant les noms sélectionnés
-for index, row in data_year.iterrows():
-    for artist in fav :
-        if artist in row["Artist"] :
-            data_final.loc[len(data_final)] = row 
+#data_final=pd.DataFrame(columns = data.columns) # On construit un DataFrame dans lequel ne sont conservés que les noms d'artistes contenant les noms sélectionnés
+#for index, row in data_artists.iterrows():
+    #for artist in fav :
+        #if artist in row["Artist"] :
+            #data_final.loc[len(data_final)] = row 
     
-# On doit construire un tableau qui rassemble les lignes contenant un même artiste sélectionné 
 
-data_reshaped = data_final.pivot_table(
+
+data_reshaped = data_filtered.pivot_table(
     index="Year", columns="Artist", values="Listening Time (s)", aggfunc="sum", fill_value=0
 )
 data_reshaped = data_reshaped.sort_values(by="Year", ascending=False)
@@ -219,5 +185,3 @@ chart = (
     .properties(height=320)
 )
 st.altair_chart(chart, use_container_width=True)
-
-
