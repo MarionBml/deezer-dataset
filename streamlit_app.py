@@ -16,8 +16,8 @@ st.write(
 # We're caching this so it doesn't reload every time the app
 # reruns (e.g. if the user interacts with the widgets).
 @st.cache_data
-def load_data_deezer():
-    dee = pd.read_excel('data/deezer-data_2175171744.xlsx', sheet_name='10_listeningHistory')
+def load_data_deezer(deezer):
+    dee = pd.read_excel(deezer, sheet_name='10_listeningHistory')
     dee = dee.drop(columns=['Platform Name', 'Platform Model'])
     dee.Date = pd.to_datetime(dee.Date,format='%Y-%m-%d %H:%M:%S')
     dee = dee.rename(columns={"Listening Time" : "Listening Time (s)"})
@@ -25,8 +25,8 @@ def load_data_deezer():
     return dee
 
 @st.cache_data
-def load_data_spotify():
-    spot = pd.read_json('data/Spotify_Audio_2013-2024_251124.json')
+def load_data_spotify(spotify):
+    spot = pd.read_json(spotify)
     spot = spot.iloc[:,0:9]
     spot['Listening Time (s)']=round(spot['ms_played']/1000,0)
     spot = spot.drop(columns=['platform', 'ms_played'])
@@ -51,8 +51,11 @@ def load_data(dee,spot):
     return data
 
 #Load the datasets
-dee = load_data_deezer()
-spot = load_data_spotify()
+DEEZER_PATH = 'data/deezer-data_2175171744.xlsx'
+SPOTIFY_PATH = 'data/Spotify_Audio_2013-2024_251124.json'
+
+dee = load_data_deezer(DEEZER_PATH)
+spot = load_data_spotify(SPOTIFY_PATH)
 data = load_data(dee,spot)
 
 # Show a slider widget with the years using `st.slider`.
