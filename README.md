@@ -1,4 +1,4 @@
-# 🎶 My Deezer data info
+# 🎶 My Music data info
 
 A simple Streamlit app showing music data from Marion's listening history from 2019 to 2024 on Deezer & Spotify.
 
@@ -20,3 +20,7 @@ A simple Streamlit app showing music data from Marion's listening history from 2
 ## How to access it online
 
 You can access directly the Streamlit Dashboard via this link : https://marion-deezer.streamlit.app/
+
+# Future improvements 
+
+Possibility for anyone to load their own Deezer & Spotify data & analyze it.
