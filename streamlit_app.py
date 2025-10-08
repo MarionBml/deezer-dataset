@@ -133,7 +133,7 @@ with col2:
     st.altair_chart(chart, use_container_width=True)
 
 #Show a multiselect widget with the favorite artists using `st.multiselect`.
-artists = data_artists['Artist'].(',').explode().str.strip().unique()
+artists = data_artists['Artist'].(str.split(',').explode().str.strip().dropna().unique()
 
 fav = st.multiselect(
     "Preferred artists",
